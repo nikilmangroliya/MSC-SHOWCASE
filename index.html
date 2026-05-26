@@ -1,0 +1,576 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artist Anniversary | 5 Years</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Preload LCP Asset -->
+  <link rel="preload" as="image" href="assets/nikil.webp" fetchpriority="high">
+</head>
+<body>
+
+
+
+  <!-- Audio & Controls -->
+  <audio id="bg-music" src="assets/music.mp3" loop></audio>
+  <audio id="album-audio-player"></audio>
+
+  <!-- Navigation -->
+  <nav class="nav-container">
+    <div class="hamburger" id="menu-toggle">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <button class="refresh-btn" onclick="smoothRefresh()">Refresh</button>
+    <button class="refresh-btn" id="music-btn" title="Play/Pause Music"><i class="fas fa-music"></i>LISTEN</button>
+    <button class="refresh-btn" id="theme-toggle" title="Toggle Day/Night Mode"><i class="fas fa-sun"></i><span>DAY</span></button>
+  </nav>
+
+  <!-- Full Screen Menu -->
+  <div class="fullscreen-menu" id="fullscreen-menu">
+    <ul class="menu-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#album-showcase">Albums</a></li>
+    </ul>
+    <div class="social-icons">
+      <a href="https://www.instagram.com/nikilmangroliya_/" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+      <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+      <a href="https://open.spotify.com/playlist/6H0Xtj5lzPiRADa8UPF9GH?si=bf2441a1bdb94be1" target="_blank"><i class="fab fa-spotify"></i></a>
+    </div>
+  </div>
+
+  <main>
+    <div>
+
+      <header class="hero" id="home">
+        <!-- Premium Ambient Glow Orbs -->
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+
+        <div class="hero-text-group back-text">
+          <div class="wow fadeInLeft" data-wow-duration="1s">
+            <div class="hero-label" id="left-label">&mdash;WHAT UP DAWG !</div>
+            <h1 class="hero-years" id="left-years">2005 &mdash; 2026</h1>
+          </div>
+        </div>
+        
+        <div class="hero-image-container">
+          <div class="hero-backdrop wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.5s">
+            <span class="backdrop-text" id="backdrop-text">MUSIC LIBRARY</span>
+          </div>
+        <div class="floating-wrapper gpu-accel">
+            <div class="wow fadeInUp" data-wow-duration="1s" data-wow-delay="1s" style="height: 100%;">
+            <img id="main-character-img" src="assets/nikil.webp" alt="Artist Portrait Cutout" class="hero-image gpu-accel" fetchpriority="high" decoding="async">
+            </div>
+          </div>
+        </div>
+        
+        <div class="hero-text-group front-text">
+          <div class="wow fadeIn" data-wow-duration="2s">
+            <div class="hero-label" id="right-label">&mdash;CONQUER &bull;PRIME</div>
+          </div>
+          <div class="wow fadeInLeft" data-wow-duration="0.8s" data-wow-delay="0.5s">
+            <h1 class="hero-years" id="right-name-main">NIKIL</h1>
+          </div>
+          <div class="wow fadeInRight" data-wow-duration="0.8s" data-wow-delay="0.5s">
+            <div class="hero-subtitle" id="right-name-sub">MANGROLIYA</div>
+          </div>
+        </div>
+        
+        <div class="scroll-indicator wow fadeIn" data-wow-duration="1s" data-wow-delay="1.5s">
+          <div class="scroll-text">Scroll</div>
+          <div class="scroll-line"></div>
+        </div>
+        
+        <div class="hero-socials wow fadeIn" data-wow-duration="1s" data-wow-delay="1.5s">
+          <a href="https://www.instagram.com/nikilmangroliya_/" target="_blank"><span>INSTAGRAM</span> <i class="fab fa-instagram"></i></a>
+          <a href="#" target="_blank"><span>TWITTER</span> <i class="fab fa-twitter"></i></a>
+          <a href="#" target="_blank"><span>YOUTUBE</span> <i class="fab fa-youtube"></i></a>
+          <a href="https://open.spotify.com/playlist/6H0Xtj5lzPiRADa8UPF9GH?si=bf2441a1bdb94be1" target="_blank"><span>Spotify</span> <i class="fab fa-spotify"></i></a>
+        </div>
+        
+        <div class="korean-desc-wrapper">
+          <div class="wow fadeInUp" data-wow-duration="1.5s" data-wow-delay="0.9s">
+            <div class="korean-description">
+“One Good Thing About Music, When It Hits You, You Feel No Pain.”
+
+            </div>
+          </div>
+        </div>
+        
+        <div class="side-text-left-wrapper">
+          <div class="wow fadeInLeft" data-wow-duration="0.5s" data-wow-delay="1.3s">
+            <div class="side-text-left">
+              Music Uniquely Reaches Areas Of The Brain That Spoken Language Simply Cannot Access. When Words Fail, Music Speaks. It Has The Extraordinary Ability To Let Us Escape Into Imagination Or Process The Deepest Parts Of Our Memories.
+            </div>
+          </div>
+        </div>
+
+        <div class="side-text-right-wrapper">
+          <div class="wow fadeInRight" data-wow-duration="0.5s" data-wow-delay="1s">
+            <div class="side-text-right">
+              Music Is A Universal Language, Capable Of Conveying Complex Thoughts And Emotions Without Relying On Words. It Acts As A Mirror To The Human Mind, Allowing Artists To Translate Their Wisdom And Life Experiences Into Melody.
+            </div>
+          </div>
+        </div>
+
+      </header>
+
+
+
+      <!-- ============================================
+           SECTION: Album Scroll Showcase (Single)
+           ============================================ -->
+      <section class="album-showcase" id="album-showcase">
+        <div class="album-showcase-pinned">
+          <!-- Background Text Animation -->
+          <div class="album-bg-text bg-text-left" id="bg-text-left">LOVE</div>
+          <div class="album-bg-text bg-text-right" id="bg-text-right">MELODY</div>
+
+          <div class="album-featured" id="album-featured">
+            <div class="album-featured-art book-model">
+              <!-- Front Cover -->
+              <div class="book-front">
+                <img src="assets/album1.webp" alt="Album Art" loading="lazy" decoding="async">
+                <div class="album-title-overlay"> 83 </div>
+                <div class="album-spotify-overlay"><i class="fab fa-spotify"></i> Spotify</div>
+                <div class="album-play-wrapper" id="front-play-wrapper">
+                  <div class="album-play-text" id="front-play-text">PLAY</div>
+                  <div class="album-play-icon" id="front-play-icon"><i class="fas fa-play"></i></div>
+                </div>
+                <div class="album-view-btn" id="front-view-btn">SEE<br>MORE</div>
+              </div>
+              
+              <!-- Back Cover -->
+              <div class="book-back">
+                <img src="assets/album1.webp" alt="Album Art Back" loading="lazy" decoding="async">
+              </div>
+              
+              <!-- Spine -->
+              <div class="book-spine"><span>83</span></div>
+              
+              <!-- Pages Edges -->
+              <div class="book-page-right"><span>83</span></div>
+              <div class="book-page-top"><span>83</span></div>
+              <div class="book-page-bottom"><span>83</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           SECTION: Album Focus Modal
+           ============================================ -->
+      <div id="album-focus-modal" class="album-focus-modal">
+        <div class="focus-overlay" id="focus-overlay"></div>
+        <button class="focus-back-btn" id="focus-back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+        <div class="focus-content">
+          <div class="album-featured-art book-model" id="focus-album-model">
+            <div class="book-front">
+              <img src="assets/album1.webp" alt="Album Art" id="focus-album-img" loading="lazy" style="cursor: pointer;" title="Click to Play/Pause">
+              <div class="album-view-btn" id="focus-view-btn">SEE<br>MORE</div>
+            </div>
+            <div class="book-back">
+              <img src="assets/album1.webp" alt="Album Art Back" id="focus-album-img-back" loading="lazy">
+            </div>
+            <div class="book-spine"></div>
+            <div class="book-page-right"></div>
+            <div class="book-page-top"></div>
+            <div class="book-page-bottom"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Album Navigation Arrows (fixed to viewport, independent of modal) -->
+      <button class="focus-nav-btn focus-nav-prev" id="focus-nav-prev" title="Previous Album"><i class="fas fa-chevron-left"></i></button>
+      <button class="focus-nav-btn focus-nav-next" id="focus-nav-next" title="Next Album"><i class="fas fa-chevron-right"></i></button>
+
+      <!-- ============================================
+           SECTION: Album Side Panel (Hidden)
+           ============================================ -->
+      <div class="panel-backdrop" id="panel-backdrop"></div>
+      <div id="album-side-panel" class="album-side-panel light-theme">
+        <div class="panel-close-btn" id="panel-close-btn"><i class="fas fa-times"></i></div>
+        
+        <div class="panel-content">
+          <div class="panel-album-img-wrapper">
+            <img id="panel-album-img" src="assets/album1.webp" alt="Album Cover Thumbnail" loading="lazy">
+          </div>
+          <div class="panel-header">
+            <h2 class="panel-title">83</h2>
+            <span class="panel-artist">SRK</span>
+            <div class="play-controls">
+              <div class="audio-player-ui" id="audio-player-ui" style="display: none;">
+                <button id="panel-play-btn" class="panel-play-btn"><i class="fas fa-play"></i></button>
+                <div class="audio-player-body">
+                  <div class="audio-time">
+                    <span id="audio-current-time">0:00</span>
+                    <span id="audio-duration">0:00</span>
+                  </div>
+                  <div class="audio-progress-bar" id="audio-progress-bar">
+                    <div class="audio-progress" id="audio-progress"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="panel-stats">
+            <div class="stat-box">
+              <i class="fas fa-headphones"></i>
+              <div class="stat-info">
+                <span class="stat-value">83M</span>
+                <span class="stat-label">Listens</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="panel-description">
+            <p>A custom retro-themed auditory masterpiece designed specifically to celebrate personal creative milestones. Rich, pulsing synth waves blend seamlessly with dynamic basslines to create a highly addictive nostalgic vibe.</p>
+          </div>
+          
+          <div class="panel-platforms">
+            <h3>Listen & Connect</h3>
+            <div class="platform-buttons">
+              <a href="https://open.spotify.com/search/83" target="_blank" class="platform-btn spotify" title="Spotify"><i class="fab fa-spotify"></i></a>
+              <a href="https://music.apple.com/us/search?term=83" target="_blank" class="platform-btn apple" title="Apple Music"><i class="fab fa-apple"></i></a>
+              <a href="https://www.youtube.com/results?search_query=83+song" target="_blank" class="platform-btn youtube" title="YouTube Music"><i class="fab fa-youtube"></i></a>
+              <a href="#" target="_blank" class="platform-btn soundcloud" title="SoundCloud"><i class="fab fa-soundcloud"></i></a>
+              <a href="#" target="_blank" class="platform-btn instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================
+           SECTION: More Albums Grid
+           ============================================ -->
+      <section class="more-albums-section" id="love-albums-section">
+        <div class="more-albums-heading" id="more-albums-heading">
+          <div class="heading-text heading-left" id="heading-explore">PRAISE OF</div>
+          <div class="heading-text heading-right" id="heading-more">LOVE</div>
+        </div>
+        <div class="more-albums-grid">
+          <!-- Mini Album 1 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album2.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album2.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>PARCHAI</span></div>
+              <div class="book-page-right"><span>PARCHAI</span></div>
+              <div class="book-page-top"><span>PARCHAI</span></div>
+              <div class="book-page-bottom"><span>PARCHAI</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 2 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album3.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album3.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>SAHIBA</span></div>
+              <div class="book-page-right"><span>SAHIBA</span></div>
+              <div class="book-page-top"><span>SAHIBA</span></div>
+              <div class="book-page-bottom"><span>SAHIBA</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 3 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album4.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album4.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>KASHISH</span></div>
+              <div class="book-page-right"><span>KASHISH</span></div>
+              <div class="book-page-top"><span>KASHISH</span></div>
+              <div class="book-page-bottom"><span>KASHISH</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 4 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album5.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album5.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>KYA CHAHIYE</span></div>
+              <div class="book-page-right"><span>KYA CHAHIYE</span></div>
+              <div class="book-page-top"><span>KYA CHAHIYE</span></div>
+              <div class="book-page-bottom"><span>KYA CHAHIYE</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 5 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album6.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album6.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>MAHIYE JINNA SOHNA</span></div>
+              <div class="book-page-right"><span>MAHIYE JINNA SOHNA</span></div>
+              <div class="book-page-top"><span>MAHIYE JINNA SOHNA</span></div>
+              <div class="book-page-bottom"><span>MAHIYE JINNA SOHNA</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 6 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album7.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album7.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>JAB BHI TERI YAD AAYEGI</span></div>
+              <div class="book-page-right"><span>JAB BHI TERI YAD AAYEGI</span></div>
+              <div class="book-page-top"><span>JAB BHI TERI YAD AAYEGI</span></div>
+              <div class="book-page-bottom"><span>JAB BHI TERI YAD AAYEGI</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 7 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album8.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album8.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>RABBA</span></div>
+              <div class="book-page-right"><span>RABBA</span></div>
+              <div class="book-page-top"><span>RABBA</span></div>
+              <div class="book-page-bottom"><span>RABBA</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 8 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album9.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album9.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>TERI AANKHON MEIN</span></div>
+              <div class="book-page-right"><span>TERI AANKHON MEIN</span></div>
+              <div class="book-page-top"><span>TERI AANKHON MEIN</span></div>
+              <div class="book-page-bottom"><span>TERI AANKHON MEIN</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 9 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album10.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album10.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>RAMO RE</span></div>
+              <div class="book-page-right"><span>RAMO RE</span></div>
+              <div class="book-page-top"><span>RAMO RE</span></div>
+              <div class="book-page-bottom"><span>RAMO RE</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 10 -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album11.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album11.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>CHITTA</span></div>
+              <div class="book-page-right"><span>CHITTA</span></div>
+              <div class="book-page-top"><span>CHITTA</span></div>
+              <div class="book-page-bottom"><span>CHITTA</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============================================
+           SECTION: Explore Arrogance Albums Grid
+           ============================================ -->
+      <section class="more-albums-section" id="arrogance-albums-section">
+        <div class="more-albums-heading" id="arrogance-albums-heading">
+          <div class="heading-text heading-left" id="heading-explore-arrogance">METAL</div>
+          <div class="heading-text heading-right" id="heading-arrogance">MELODY</div>
+        </div>
+        <div class="more-albums-grid">
+          <!-- Mini Album 11 (album12.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album12.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album12.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>AFSANAY</span></div>
+              <div class="book-page-right"><span>AFSANAY</span></div>
+              <div class="book-page-top"><span>AFSANAY</span></div>
+              <div class="book-page-bottom"><span>AFSANAY</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 12 (album13.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album13.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album13.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>WARNING</span></div>
+              <div class="book-page-right"><span>WARNING</span></div>
+              <div class="book-page-top"><span>WARNING</span></div>
+              <div class="book-page-bottom"><span>WARNING</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 13 (album14.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album14.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album14.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>I GUESS</span></div>
+              <div class="book-page-right"><span>I GUESS</span></div>
+              <div class="book-page-top"><span>I GUESS</span></div>
+              <div class="book-page-bottom"><span>I GUESS</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 14 (album15.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album15.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album15.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>MAHAAN</span></div>
+              <div class="book-page-right"><span>MAHAAN</span></div>
+              <div class="book-page-top"><span>MAHAAN</span></div>
+              <div class="book-page-bottom"><span>MAHAAN</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 15 (album16.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album16.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album16.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>ABOUT ME</span></div>
+              <div class="book-page-right"><span>ABOUT ME</span></div>
+              <div class="book-page-top"><span>ABOUT ME</span></div>
+              <div class="book-page-bottom"><span>ABOUT ME</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 16 (album17.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/album17.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/album17.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>SYSTEM PE SYSTEM</span></div>
+              <div class="book-page-right"><span>SYSTEM PE SYSTEM</span></div>
+              <div class="book-page-top"><span>SYSTEM PE SYSTEM</span></div>
+              <div class="book-page-bottom"><span>SYSTEM PE SYSTEM</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           SECTION: Album Scroll Showcase (Gujarati Featured)
+           ============================================ -->
+      <section class="album-showcase" id="album-showcase-gujarati">
+        <div class="album-showcase-pinned">
+          <!-- Background Text Animation -->
+          <div class="album-bg-text bg-text-left">GUJARATI</div>
+          <div class="album-bg-text bg-text-right">SONG</div>
+
+          <div class="album-featured">
+            <div class="album-featured-art book-model">
+              <!-- Front Cover -->
+              <div class="book-front">
+                <img src="assets/gujarati_main.webp" alt="Album Art" loading="lazy" decoding="async">
+                <div class="album-title-overlay">DWARIKA NO NATH</div>
+                <div class="album-spotify-overlay"><i class="fab fa-spotify"></i> Spotify</div>
+                <div class="album-play-wrapper">
+                  <div class="album-play-text">PLAY</div>
+                  <div class="album-play-icon"><i class="fas fa-play"></i></div>
+                </div>
+                <div class="album-view-btn">SEE<br>MORE</div>
+              </div>
+              
+              <!-- Back Cover -->
+              <div class="book-back">
+                <img src="assets/gujarati_main.webp" alt="Album Art Back" loading="lazy" decoding="async">
+              </div>
+              
+              <!-- Spine -->
+              <div class="book-spine"><span>DWARIKA NO NATH</span></div>
+              
+              <!-- Pages Edges -->
+              <div class="book-page-right"><span>DWARIKA NO NATH</span></div>
+              <div class="book-page-top"><span>DWARIKA NO NATH</span></div>
+              <div class="book-page-bottom"><span>DWARIKA NO NATH</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           SECTION: Explore Gujarati Albums Grid
+           ============================================ -->
+      <section class="more-albums-section" id="gujarati-albums-section">
+        <div class="more-albums-heading" id="gujarati-albums-heading">
+          <div class="heading-text heading-left" id="heading-explore-gujarati">EXPLORE</div>
+          <div class="heading-text heading-right" id="heading-gujarati">GUJARATI</div>
+        </div>
+        <div class="more-albums-grid">
+          <!-- Mini Album 21 (gujarati1.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/gujarati1.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/gujarati1.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>MELE THI</span></div>
+              <div class="book-page-right"><span>MELE THI</span></div>
+              <div class="book-page-top"><span>MELE THI</span></div>
+              <div class="book-page-bottom"><span>MELE THI</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 22 (gujarati2.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/gujarati2.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/gujarati2.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>MANADA NA MEET</span></div>
+              <div class="book-page-right"><span>MANADA NA MEET</span></div>
+              <div class="book-page-top"><span>MANADA NA MEET</span></div>
+              <div class="book-page-bottom"><span>MANADA NA MEET</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 23 (gujarati3.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/gujarati3.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/gujarati3.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>MARU MAN MOHI LIDHU</span></div>
+              <div class="book-page-right"><span>MARU MAN MOHI LIDHU</span></div>
+              <div class="book-page-top"><span>MARU MAN MOHI LIDHU</span></div>
+              <div class="book-page-bottom"><span>MARU MAN MOHI LIDHU</span></div>
+            </div>
+          </div>
+          <!-- Mini Album 24 (gujarati4.webp) -->
+          <div class="mini-album-container">
+            <div class="mini-album-3d">
+              <div class="book-front"><img src="assets/gujarati4.webp" alt="Album" loading="lazy"></div>
+              <div class="book-back"><img src="assets/gujarati4.webp" alt="Album" loading="lazy"></div>
+              <div class="book-spine"><span>MISRI</span></div>
+              <div class="book-page-right"><span>MISRI</span></div>
+              <div class="book-page-top"><span>MISRI</span></div>
+              <div class="book-page-bottom"><span>MISRI</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           SECTION: Final About / Footer
+           ============================================ -->
+      <section class="final-about-section" id="final-about">
+        <div class="about-content">
+          <div class="about-image-wrapper wow fadeInUp" data-wow-duration="1s">
+            <img src="assets/nikil.png" alt="Profile Image" loading="lazy">
+          </div>
+          <h2 class="about-heading wow fadeInUp" data-wow-duration="1s">ABOUT</h2>
+          <p class="about-desc wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">
+            Music Uniquely Reaches Areas Of The Brain That Spoken Language Simply Cannot Access. This Showcase Is A Curated Journey Through Rhythm And Melody, Celebrating The Art Of Sound From 2005 To 2026. Keep Listening, Keep Exploring.
+          </p>
+          <div class="about-footer wow fadeIn" data-wow-duration="1s" data-wow-delay="0.6s">
+            <p>&copy; 2026 NIKIL MANGROLIYA. All Rights Reserved.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
