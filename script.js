@@ -901,16 +901,23 @@ function initAlbumShowcase() {
   let currentFocusAudio = "";
   let activeMiniAlbum = null;
 
-  // Helper: update nav button visibility based on current album position
+  // Helper: get all albums within the same section as the given album
+  const getSectionAlbums = (albumNode) => {
+    const section = albumNode.closest('.more-albums-section');
+    if (!section) return Array.from(document.querySelectorAll('.mini-album-3d'));
+    return Array.from(section.querySelectorAll('.mini-album-3d'));
+  };
+
+  // Helper: update nav button visibility based on current album position within its section
   const updateNavButtons = (albumNode) => {
-    const allAlbums = Array.from(document.querySelectorAll('.mini-album-3d'));
-    const idx = allAlbums.indexOf(albumNode);
+    const sectionAlbums = getSectionAlbums(albumNode);
+    const idx = sectionAlbums.indexOf(albumNode);
     if (focusNavPrev) {
       if (idx > 0) { focusNavPrev.classList.add('visible'); }
       else { focusNavPrev.classList.remove('visible'); }
     }
     if (focusNavNext) {
-      if (idx < allAlbums.length - 1) { focusNavNext.classList.add('visible'); }
+      if (idx < sectionAlbums.length - 1) { focusNavNext.classList.add('visible'); }
       else { focusNavNext.classList.remove('visible'); }
     }
   };
@@ -933,11 +940,15 @@ function initAlbumShowcase() {
   const restoreAllAlbums = () => {
     document.querySelectorAll('.mini-album-container').forEach(el => {
       el.classList.remove('focus-dimmed');
+      // Clear GSAP inline transforms so ScrollTrigger can re-evaluate cleanly
+      gsap.set(el, { clearProps: "transform,opacity" });
     });
     document.querySelectorAll('.mini-album-3d').forEach(el => {
       el.classList.remove('focus-hidden');
       el.style.animationPlayState = 'running';
     });
+    // Re-sync ScrollTrigger positions after layout changes
+    ScrollTrigger.refresh();
   };
 
   // Navigate to a specific album while modal is open (smooth transition)
@@ -986,10 +997,10 @@ function initAlbumShowcase() {
     // Update nav button visibility
     updateNavButtons(targetAlbumNode);
 
-    // Update scroll hints visibility dynamically
-    const allAlbums = Array.from(document.querySelectorAll('.mini-album-3d'));
-    const isFirst = (targetAlbumNode === allAlbums[0]);
-    const isLast = (targetAlbumNode === allAlbums[allAlbums.length - 1]);
+    // Update scroll hints visibility dynamically (scoped to current section)
+    const sectionAlbums = getSectionAlbums(targetAlbumNode);
+    const isFirst = (targetAlbumNode === sectionAlbums[0]);
+    const isLast = (targetAlbumNode === sectionAlbums[sectionAlbums.length - 1]);
 
     if (focusHintUp) {
       gsap.to(focusHintUp, { opacity: isFirst ? 0 : 1, duration: 0.3 });
@@ -1093,9 +1104,9 @@ function initAlbumShowcase() {
       if (focusBackBtn) gsap.to(focusBackBtn, { opacity: 1, duration: 0.4, delay: 0.2 });
       if (focusViewBtn) gsap.to(focusViewBtn, { opacity: 1, duration: 0.4, delay: 0.3 });
 
-      const allAlbums = Array.from(document.querySelectorAll('.mini-album-3d'));
-      const isFirst = (albumNode === allAlbums[0]);
-      const isLast = (albumNode === allAlbums[allAlbums.length - 1]);
+      const sectionAlbumsForOpen = getSectionAlbums(albumNode);
+      const isFirst = (albumNode === sectionAlbumsForOpen[0]);
+      const isLast = (albumNode === sectionAlbumsForOpen[sectionAlbumsForOpen.length - 1]);
 
       if (focusHintUp && !isFirst) gsap.to(focusHintUp, { opacity: 1, duration: 0.4, delay: 0.5 });
       if (focusHintDown && !isLast) gsap.to(focusHintDown, { opacity: 1, duration: 0.4, delay: 0.5 });
@@ -1235,18 +1246,18 @@ function initAlbumShowcase() {
     focusNavPrev.addEventListener('click', (e) => {
       e.stopPropagation();
       if (!activeMiniAlbum) return;
-      const allAlbums = Array.from(document.querySelectorAll('.mini-album-3d'));
-      const idx = allAlbums.indexOf(activeMiniAlbum);
-      if (idx > 0) navigateToAlbum(allAlbums[idx - 1]);
+      const sectionAlbums = getSectionAlbums(activeMiniAlbum);
+      const idx = sectionAlbums.indexOf(activeMiniAlbum);
+      if (idx > 0) navigateToAlbum(sectionAlbums[idx - 1]);
     });
   }
   if (focusNavNext) {
     focusNavNext.addEventListener('click', (e) => {
       e.stopPropagation();
       if (!activeMiniAlbum) return;
-      const allAlbums = Array.from(document.querySelectorAll('.mini-album-3d'));
-      const idx = allAlbums.indexOf(activeMiniAlbum);
-      if (idx < allAlbums.length - 1) navigateToAlbum(allAlbums[idx + 1]);
+      const sectionAlbums = getSectionAlbums(activeMiniAlbum);
+      const idx = sectionAlbums.indexOf(activeMiniAlbum);
+      if (idx < sectionAlbums.length - 1) navigateToAlbum(sectionAlbums[idx + 1]);
     });
   }
   let focusScrollAmount = 0;
@@ -1276,7 +1287,7 @@ function initAlbumShowcase() {
       if (sidePanel && sidePanel.contains(e.target)) return;
       if (e.touches.length > 0) {
         let delta = Math.abs(e.touches[0].clientY - focusTouchStartY);
-        if (delta > 300) {
+        if (delta > 600) {
           closeFocusModal();
         }
       }
