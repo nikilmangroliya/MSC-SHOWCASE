@@ -1923,6 +1923,10 @@
     /* Dimmed state when focus modal is open (CSS class, not GSAP inline) */
     .mini-album-container.focus-dimmed {
       opacity: 0.3 !important;
+      /* Override GSAP ScrollTrigger transforms so dimmed albums stay at their
+         correct visual position — prevents tap misalignment on Android */
+      transform: none !important;
+      pointer-events: auto;
     }
 
     /* Hidden state for the active album shown in modal */
@@ -2560,6 +2564,8 @@
                   opacity 0.3s ease,
                   visibility 0.3s ease;
       box-shadow: 0 4px 20px var(--glass-black-30);
+      /* Prevent Android tap highlight */
+      -webkit-tap-highlight-color: transparent;
     }
 
     .focus-nav-btn.visible {
@@ -2592,7 +2598,10 @@
     }
 
     .focus-nav-btn:active {
-      transform: translateY(-50%) scale(0.92);
+      transform: translateY(-50%) scale(0.88);
+      background: var(--crimson-red);
+      color: #ffffff;
+      border-color: var(--crimson-red);
     }
 
     .focus-nav-btn i {
@@ -2607,18 +2616,48 @@
       transform: translateX(2px);
     }
 
-    /* Mobile: push arrows slightly inward and shrink */
-    @media (max-width: 480px) {
+    /* Tablet & Mobile: reposition arrows to bottom of viewport so they don't overlap the album */
+    @media (max-width: 768px) {
       .focus-nav-btn {
-        width: 38px;
-        height: 38px;
-        font-size: 0.85rem;
+        top: auto;
+        bottom: clamp(1.5rem, 4vh, 3rem);
+        transform: none;
+        width: 48px;
+        height: 48px;
+        font-size: 1rem;
+        /* Use safer bottom positioning for Android dynamic toolbar */
+        bottom: max(1.5rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
       }
       .focus-nav-prev {
-        left: 0.5rem;
+        left: calc(50% - 60px);
       }
       .focus-nav-next {
-        right: 0.5rem;
+        right: calc(50% - 60px);
+      }
+      .focus-nav-btn:active {
+        transform: scale(0.88);
+      }
+      .focus-nav-prev:hover {
+        transform: translateX(-4px);
+      }
+      .focus-nav-next:hover {
+        transform: translateX(4px);
+      }
+    }
+
+    /* Small Mobile: fine-tune spacing */
+    @media (max-width: 480px) {
+      .focus-nav-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 0.95rem;
+        bottom: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
+      }
+      .focus-nav-prev {
+        left: calc(50% - 50px);
+      }
+      .focus-nav-next {
+        right: calc(50% - 50px);
       }
     }
 
