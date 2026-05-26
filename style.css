@@ -636,6 +636,10 @@
       font-size: clamp(3rem, 8vw, 9.5rem);
       letter-spacing: 0.02em;
     }
+
+    .hero-disclaimer {
+      display: none;
+    }
     
     .hero-subtitle {
       font-size: clamp(1.5rem, 4.5vw, 5rem);
@@ -1940,15 +1944,16 @@
      height: 25px;
      margin: 3rem 0;
       transition: opacity 0.4s ease;
+      pointer-events: none; /* Make container click-through to prevent overlapping containers from blocking clicks */
     }
 
     /* Dimmed state when focus modal is open (CSS class, not GSAP inline) */
     .mini-album-container.focus-dimmed {
-      opacity: 0.3 !important;
+      opacity: 1 !important; /* Keep background albums fully visible as requested */
       /* Override GSAP ScrollTrigger transforms so dimmed albums stay at their
          correct visual position — prevents tap misalignment on Android */
       transform: none !important;
-      pointer-events: auto;
+      pointer-events: none; /* Disable touches on background elements when modal is open */
     }
 
     /* Hidden state for the active album shown in modal */
@@ -1964,6 +1969,7 @@
       animation: auto-spin 12s infinite linear;
       z-index: 2500; /* Ensure albums are clickable above the focus overlay */
       will-change: transform;
+      pointer-events: auto; /* Enable clicks/touches explicitly on the book model itself */
     }
 
     @media (min-width: 769px) {
@@ -2472,6 +2478,48 @@
       overflow: visible;
     }
 
+    .focus-marquee-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%);
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      user-select: none;
+    }
+
+    .focus-marquee-content {
+      display: flex;
+      white-space: nowrap;
+      animation: focusMarqueeRun 35s linear infinite;
+      font-family: var(--font-main);
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: clamp(3.5rem, 11vw, 9.5rem);
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.12);
+      letter-spacing: 0.05em;
+      padding-left: 2rem;
+    }
+
+    [data-theme="light"] .focus-marquee-content {
+      -webkit-text-stroke: 1.5px rgba(0, 0, 0, 0.08);
+    }
+
+    @keyframes focusMarqueeRun {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-50%, 0, 0);
+      }
+    }
+
     .focus-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -2556,132 +2604,7 @@
       transform: translateX(-3px);
     }
 
-    /* --- Album Navigation Arrows (Prev / Next) --- */
-    .focus-nav-btn {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2600;
-      width: clamp(44px, 6vw, 56px);
-      height: clamp(44px, 6vw, 56px);
-      border-radius: 50%;
-      border: 1.5px solid var(--glass-white-25);
-      background: var(--glass-white-8);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      color: var(--glass-white-90);
-      font-size: clamp(1rem, 1.8vw, 1.3rem);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                  background 0.3s ease,
-                  border-color 0.3s ease,
-                  color 0.3s ease,
-                  box-shadow 0.3s ease,
-                  opacity 0.3s ease,
-                  visibility 0.3s ease;
-      box-shadow: 0 4px 20px var(--glass-black-30);
-      /* Prevent Android tap highlight */
-      -webkit-tap-highlight-color: transparent;
-    }
 
-    .focus-nav-btn.visible {
-      opacity: 1;
-      pointer-events: auto;
-      visibility: visible;
-    }
-
-    .focus-nav-prev {
-      left: clamp(0.8rem, 3vw, 2.5rem);
-    }
-
-    .focus-nav-next {
-      right: clamp(0.8rem, 3vw, 2.5rem);
-    }
-
-    .focus-nav-btn:hover {
-      background: var(--glass-white-15);
-      border-color: var(--peach-orange);
-      color: var(--peach-orange);
-      box-shadow: 0 6px 28px var(--glass-black-40), 0 0 15px rgba(255, 154, 118, 0.15);
-    }
-
-    .focus-nav-prev:hover {
-      transform: translateY(-50%) translateX(-4px);
-    }
-
-    .focus-nav-next:hover {
-      transform: translateY(-50%) translateX(4px);
-    }
-
-    .focus-nav-btn:active {
-      transform: translateY(-50%) scale(0.88);
-      background: var(--crimson-red);
-      color: #ffffff;
-      border-color: var(--crimson-red);
-    }
-
-    .focus-nav-btn i {
-      transition: transform 0.3s ease;
-    }
-
-    .focus-nav-prev:hover i {
-      transform: translateX(-2px);
-    }
-
-    .focus-nav-next:hover i {
-      transform: translateX(2px);
-    }
-
-    /* Tablet & Mobile: reposition arrows to bottom of viewport so they don't overlap the album */
-    @media (max-width: 768px) {
-      .focus-nav-btn {
-        top: auto;
-        bottom: clamp(1.5rem, 4vh, 3rem);
-        transform: none;
-        width: 48px;
-        height: 48px;
-        font-size: 1rem;
-        /* Use safer bottom positioning for Android dynamic toolbar */
-        bottom: max(1.5rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
-      }
-      .focus-nav-prev {
-        left: calc(50% - 60px);
-      }
-      .focus-nav-next {
-        right: calc(50% - 60px);
-      }
-      .focus-nav-btn:active {
-        transform: scale(0.88);
-      }
-      .focus-nav-prev:hover {
-        transform: translateX(-4px);
-      }
-      .focus-nav-next:hover {
-        transform: translateX(4px);
-      }
-    }
-
-    /* Small Mobile: fine-tune spacing */
-    @media (max-width: 480px) {
-      .focus-nav-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 0.95rem;
-        bottom: max(1rem, env(safe-area-inset-bottom, 0px) + 1rem);
-      }
-      .focus-nav-prev {
-        left: calc(50% - 50px);
-      }
-      .focus-nav-next {
-        right: calc(50% - 50px);
-      }
-    }
 
 
     .focus-content {
@@ -2798,6 +2721,11 @@
 
     /* --- Mobile <= 768px: Album & Section Fixes --- */
     @media (max-width: 768px) {
+      body {
+        overscroll-behavior-y: auto !important;
+        overscroll-behavior-x: auto !important;
+      }
+
   /* 1. Hero Section: Convert absolute positioning to a natural flex column */
   .hero {
     height: auto !important;
@@ -2831,12 +2759,31 @@
     align-self: center !important;
   }
 
+  .hero-disclaimer {
+    display: block !important;
+    font-family: var(--font-main);
+    font-size: clamp(0.6rem, 1.8vw, 0.72rem);
+    font-weight: 700;
+    color: var(--crimson-red);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 0.75rem;
+    opacity: 0.9;
+    text-align: center;
+    border: 1px solid rgba(204, 0, 34, 0.15);
+    background: rgba(204, 0, 34, 0.05);
+    padding: 0.35rem 0.7rem;
+    border-radius: 20px;
+    max-width: 290px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .hero-image-container {
     position: relative !important;
-    height: 50vh !important;
-    height: 70vh !important;
-    min-height: 450px !important;
-    max-height: 650px !important;
+    height: 75vh !important;
+    min-height: 520px !important;
+    max-height: 750px !important;
     width: 100%; 
     margin: 1rem 0 !important;
   }
@@ -2923,10 +2870,13 @@
     text-align: center !important;
   }
 
-      /* Mini album containers: give them enough room */
+      /* Mini album containers: balanced compact spacing on mobile */
       .mini-album-container {
-    height: 30px;
-    margin: 0.4rem 0;
+        height: 45px !important;
+        margin: 0 !important;
+      }
+      .more-albums-grid {
+        gap: 0.5rem !important;
       }
 
       /* Album background text: scale down to prevent bleed */
@@ -2955,14 +2905,22 @@
       bottom: 30%;
     }
 
-      /* Album showcase section: reduce min-height for mobile */
+      /* Album showcase section: balanced min-height to ensure the 3D spin animation is smooth and elegant */
       .album-showcase {
-        min-height: 240vh;
+        min-height: 180vh !important;
       }
 
       /* Ensure hero socials stack properly at this range */
       .hero-socials {
         flex-wrap: wrap;
+      }
+
+      /* Reduce massive empty paddings between sections and lists on mobile */
+      .more-albums-section {
+        padding: 3.5rem 1rem !important;
+      }
+      .more-albums-grid {
+        padding: 1.5rem 0 3.5rem 0 !important;
       }
     }
 
@@ -2990,8 +2948,11 @@
       }
 
       .mini-album-container {
-    height: 21px;
-    margin: 0.2rem 0;
+        height: 35px !important;
+        margin: 0 !important;
+      }
+      .more-albums-grid {
+        gap: 0.4rem !important;
       }
 
       .mini-album-3d {
@@ -3016,17 +2977,14 @@
       }
 
       .album-showcase {
-        min-height: 220vh;
+        min-height: 170vh !important;
       }
 
-    /* Make the hero image even smaller on very small phones */
+    /* Make the hero image taller on mobile */
     .hero-image-container {
-      height: 45vh !important;
-      min-height: 280px !important;
-      max-height: 420px !important;
-      height: 65vh !important;
-      min-height: 380px !important;
-      max-height: 550px !important;
+      height: 72vh !important;
+      min-height: 440px !important;
+      max-height: 650px !important;
     }
 
       /* Book overlays: tighter spacing */
@@ -3140,9 +3098,96 @@
   background: transparent;
   z-index: 10;
   padding: var(--space-xl) var(--space-md);
+  overflow: hidden; /* Ensure scrolling text stays strictly inside section boundaries */
+}
+
+/* Premium Ambient Background Marquees */
+.about-marquee-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  opacity: 0.15;
+  user-select: none;
+}
+
+[data-theme="light"] .about-marquee-container {
+  opacity: 0.08;
+}
+
+.about-marquee-row {
+  display: flex;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.about-marquee-text {
+  display: flex;
+  white-space: nowrap;
+  font-family: var(--font-main);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  letter-spacing: 0.05em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--text-white);
+}
+
+.about-marquee-text span {
+  padding-right: 2rem;
+}
+
+/* Dual directions infinite motion keyframes */
+.row-left .about-marquee-text {
+  animation: aboutMarqueeLeft 40s linear infinite;
+}
+
+.row-right .about-marquee-text {
+  animation: aboutMarqueeRight 40s linear infinite;
+}
+
+@keyframes aboutMarqueeLeft {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes aboutMarqueeRight {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* Scrolling Album Covers Row */
+.about-marquee-images {
+  display: flex;
+  gap: 2.5rem;
+  animation: aboutMarqueeRight 40s linear infinite;
+  padding: 0.5rem 0;
+}
+
+.about-marquee-images img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid var(--glass-white-20);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] .about-marquee-images img {
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 .about-content {
+  position: relative;
+  z-index: 2;
   max-width: 900px;
   text-align: center;
   display: flex;
@@ -3151,21 +3196,198 @@
   gap: 1.5rem;
 }
 
- .about-image-wrapper {
-  width: clamp(120px, 20vw, 200px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1px solid var(--glass-black-10);
-  box-shadow: 0 10px 30px var(--glass-black-20);
-  margin-bottom: -0.5rem;
+/* =========================================
+   3D ABOUT ME BOOK MODEL
+   ========================================= */
+.about-book-wrapper {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  perspective: 2000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.about-image-wrapper img {
-  width: 100%;
-  height: 100%;
+.about-book-3d {
+  position: relative;
+  width: 170px;
+  height: 226px; /* Elegant book aspect ratio */
+  transform-style: preserve-3d;
+  transform: rotateX(-12deg) rotateY(-25deg);
+  animation: aboutBookAutoSpin 16s infinite linear;
+  will-change: transform;
+}
+
+@keyframes aboutBookAutoSpin {
+  0% { transform: rotateX(-12deg) rotateY(0deg); }
+  100% { transform: rotateX(-12deg) rotateY(360deg); }
+}
+
+/* Pause spinning on hover to inspect details */
+.about-book-3d:hover {
+  animation-play-state: paused;
+}
+
+.about-book-3d .book-front,
+.about-book-3d .book-back {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 8px;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.about-book-3d .book-front {
+  transform: translateZ(9px);
+  background: var(--glass-black-10);
+  border: 1px solid var(--glass-black-10);
+  border-top: 1px solid var(--glass-white-85);
+  border-left: 1px solid var(--glass-white-70);
+  box-shadow: inset 2px 0 10px var(--glass-white-20);
+}
+
+.about-book-3d .book-front::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(115deg, var(--glass-white-20) 0%, var(--glass-white-0) 30%, var(--glass-white-0) 70%, var(--glass-black-40) 100%);
+  pointer-events: none;
+}
+
+.about-book-3d .book-back {
+  background: var(--glass-black-15);
+  transform: translateZ(-9px) rotateY(180deg);
+  border: 1px solid var(--glass-black-10);
+  border-top: 1px solid var(--glass-white-85);
+  border-right: 1px solid var(--glass-white-70);
+}
+
+.about-book-3d .book-front img,
+.about-book-3d .book-back img {
+  width: 100%; height: 100%;
   object-fit: cover;
-  display: block;
+  border-radius: inherit;
+  transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity;
+}
+
+.about-book-3d .book-back img {
+  transform: scaleX(-1);
+}
+
+/* Spines and paper edges for the About Book */
+.about-book-3d .book-spine {
+  position: absolute;
+  top: 0; left: 0;
+  width: 18px; height: 100%;
+  background: linear-gradient(135deg, var(--glass-white-45) 0%, var(--glass-white-5) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transform: translateX(-9px) rotateY(-90deg);
+  border-radius: 4px 0 0 4px;
+  border: 1px solid var(--glass-black-20);
+  box-shadow: inset 0 0 15px var(--glass-white-20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-book-3d .book-page-right {
+  position: absolute;
+  top: 0; right: 0;
+  width: 18px; height: 100%;
+  background: linear-gradient(135deg, var(--glass-white-35) 0%, var(--glass-white-5) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-black-20);
+  transform: translateX(9px) rotateY(90deg);
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-book-3d .book-page-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 18px;
+  background: linear-gradient(135deg, var(--glass-white-35) 0%, var(--glass-white-5) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-black-20);
+  transform: translateY(-9px) rotateX(90deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-book-3d .book-page-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 18px;
+  background: linear-gradient(135deg, var(--glass-white-35) 0%, var(--glass-white-5) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-black-20);
+  transform: translateY(9px) rotateX(-90deg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spine and Page text details */
+.about-book-3d .book-spine span,
+.about-book-3d .book-page-right span,
+.about-book-3d .book-page-top span,
+.about-book-3d .book-page-bottom span {
+  color: var(--glass-white-90);
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 5px var(--glass-black-80);
+  white-space: nowrap;
+  font-size: 8px !important;
+  line-height: 1;
+}
+
+.about-book-3d .book-spine span,
+.about-book-3d .book-page-right span {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.about-book-3d .book-spine span {
+  transform: rotate(180deg);
+}
+
+.about-book-3d .book-page-bottom span {
+  transform: rotate(180deg);
+}
+
+/* Overlay badge on Front Cover */
+.book-spine-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--glass-black-40);
+  border: 1px solid var(--glass-white-20);
+  color: #ffffff;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+/* Fade class for cross-fade cycling on book cover */
+.about-book-3d img.fade-out {
+  opacity: 0;
 }
 
 .about-heading {
