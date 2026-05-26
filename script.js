@@ -8,15 +8,18 @@ window.addEventListener('beforeunload', () => {
 
 // Optimization: Lenis Smooth Scroll Synchronized with GSAP
 const lenis = new Lenis({
-  lerp: 0.08,             // Linear interpolation (lower = smoother damping, caps sudden high-speed swipe spikes)
-  wheelMultiplier: 0.75,  // Dampen wheel scroll speed to prevent fast overshooting
-  touchMultiplier: 0.8,   // Dampen mobile touch swipe speed to maintain stable frame rates
+  lerp: 0.06,             // Lower value = smoother damping, naturally slows high-speed spikes
+  wheelMultiplier: 0.7,   // Dampen wheel scroll speed slightly
+  touchMultiplier: 0.6,   // Dampen touch swipe speed to make scrolling naturally slow and elegant on mobile
   smooth: true,
-  smoothTouch: true       // Enable smooth touch scrolling on mobile to keep GSAP animations completely stutter-free
+  smoothTouch: true       // Enable smooth touch scrolling on mobile to prevent extreme fast speedups
 });
 lenis.scrollTo(0, { immediate: true });
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({
+  ignoreMobileResize: true // Prevent mobile address bar show/hide from triggering recalculations and layout jumps
+});
 ScrollTrigger.clearScrollMemory("manual");
 lenis.on('scroll', ScrollTrigger.update);
 
@@ -238,6 +241,32 @@ function initAlbumShowcase() {
   const textLeft = document.getElementById('bg-text-left');
   const textRight = document.getElementById('bg-text-right');
   if (!showcase || !album) return;
+
+  // Dynamic poster-matched color mapping for the background marquee
+  const albumColors = {
+    "album1.webp": "rgba(255, 42, 75, 0.55)",         // Neon Crimson
+    "album2.webp": "rgba(255, 105, 180, 0.55)",       // Hot Pink
+    "album3.webp": "rgba(255, 215, 0, 0.55)",         // Gold
+    "album4.webp": "rgba(138, 43, 226, 0.55)",        // Purple
+    "album5.webp": "rgba(30, 144, 255, 0.55)",        // Blue
+    "album6.webp": "rgba(255, 69, 0, 0.55)",          // Orange-Red
+    "album7.webp": "rgba(0, 206, 209, 0.55)",         // Teal
+    "album8.webp": "rgba(218, 165, 32, 0.55)",        // Amber
+    "album9.webp": "rgba(255, 20, 147, 0.55)",        // Magenta
+    "album10.webp": "rgba(255, 140, 0, 0.55)",        // Vibrant Orange
+    "album11.webp": "rgba(50, 205, 50, 0.55)",         // Lime Green
+    "album12.webp": "rgba(186, 85, 211, 0.55)",        // Orchid Rap
+    "album13.webp": "rgba(255, 215, 0, 0.55)",        // Gold Warning
+    "album14.webp": "rgba(0, 191, 255, 0.55)",        // Sky Blue
+    "album15.webp": "rgba(220, 20, 60, 0.55)",        // Crimson Mahaan
+    "album16.webp": "rgba(255, 140, 0, 0.55)",        // Dark Orange Street
+    "album17.webp": "rgba(0, 250, 154, 0.55)",        // Spring Green System
+    "gujarati_main.webp": "rgba(255, 69, 0, 0.6)",     // Divine Saffron-Red
+    "gujarati1.webp": "rgba(255, 165, 0, 0.6)",       // Traditional Saffron
+    "gujarati2.webp": "rgba(255, 20, 147, 0.6)",       // Deep Rose
+    "gujarati3.webp": "rgba(255, 223, 0, 0.6)",       // Gold Valam
+    "gujarati4.webp": "rgba(0, 128, 128, 0.6)"         // Teal Misri
+  };
 
   // Dictionary of album details based on image filename
   const albumData = {
@@ -608,7 +637,7 @@ function initAlbumShowcase() {
         start: 'top top',
         end: 'bottom bottom',
         pin: pinned,
-        scrub: 1,
+        scrub: 1.8,
         invalidateOnRefresh: true,
         onEnter: () => {
           if (albumAudioPlayer) {
@@ -822,55 +851,63 @@ function initAlbumShowcase() {
         });
       }
 
+      const openAlbumPanel = () => {
+        const img = albumCard.querySelector('img');
+        if (img) {
+          const src = img.getAttribute('src');
+          const filename = src.split('/').pop();
+          const data = albumData[filename] || albumData['default'];
+
+          const audio = data.audio || "";
+          if (audio) {
+            if (!albumAudioPlayer.src || !albumAudioPlayer.src.includes(audio)) {
+              albumAudioPlayer.src = audio;
+              currentAlbumAudio = audio;
+            }
+          }
+          if (panelPlayBtn) {
+            panelPlayBtn.style.display = 'flex';
+            if (audioPlayerUI) audioPlayerUI.style.display = audio ? 'flex' : 'none';
+          }
+          if (typeof syncPlayButtons !== 'undefined') syncPlayButtons();
+
+          sidePanel.querySelector('.panel-title').innerText = data.title;
+          const panelImg = sidePanel.querySelector('#panel-album-img');
+          if (panelImg) panelImg.src = src;
+          const overlayTitle = albumCard.querySelector('.album-title-overlay');
+          if (overlayTitle) overlayTitle.innerText = data.title;
+          const spineTitle = albumCard.querySelector('.book-spine span');
+          if (spineTitle) spineTitle.innerText = data.title;
+          sidePanel.querySelector('.panel-artist').innerHTML = data.artist;
+          const stats = sidePanel.querySelectorAll('.stat-value');
+          if (stats.length >= 1) {
+            stats[0].innerText = data.listens;
+          }
+          sidePanel.querySelector('.panel-description p').innerText = data.desc;
+          sidePanel.querySelector('.platform-btn.spotify').setAttribute('href', data.spotify || '#');
+          sidePanel.querySelector('.platform-btn.apple').setAttribute('href', data.apple || '#');
+          sidePanel.querySelector('.platform-btn.youtube').setAttribute('href', data.youtube || '#');
+          if (sidePanel.querySelector('.platform-btn.soundcloud')) sidePanel.querySelector('.platform-btn.soundcloud').setAttribute('href', data.soundcloud || '#');
+          if (sidePanel.querySelector('.platform-btn.instagram')) sidePanel.querySelector('.platform-btn.instagram').setAttribute('href', data.instagram || '#');
+        }
+
+        sidePanel.classList.add('open');
+        const backdrop = document.getElementById('panel-backdrop');
+        if (backdrop) backdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        if (typeof lenis !== 'undefined') lenis.stop();
+      };
+
+      // Open details panel when clicking anywhere on the album card
+      albumCard.addEventListener('click', () => {
+        openAlbumPanel();
+      });
+
       const frontViewBtn = albumCard.querySelector('.album-view-btn');
       if (frontViewBtn) {
         frontViewBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-
-          const img = albumCard.querySelector('img');
-          if (img) {
-            const src = img.getAttribute('src');
-            const filename = src.split('/').pop();
-            const data = albumData[filename] || albumData['default'];
-
-            const audio = data.audio || "";
-            if (audio) {
-              if (!albumAudioPlayer.src || !albumAudioPlayer.src.includes(audio)) {
-                albumAudioPlayer.src = audio;
-                currentAlbumAudio = audio;
-              }
-            }
-            if (panelPlayBtn) {
-              panelPlayBtn.style.display = 'flex';
-              if (audioPlayerUI) audioPlayerUI.style.display = audio ? 'flex' : 'none';
-            }
-            if (typeof syncPlayButtons !== 'undefined') syncPlayButtons();
-
-            sidePanel.querySelector('.panel-title').innerText = data.title;
-            const panelImg = sidePanel.querySelector('#panel-album-img');
-            if (panelImg) panelImg.src = src;
-            const overlayTitle = albumCard.querySelector('.album-title-overlay');
-            if (overlayTitle) overlayTitle.innerText = data.title;
-            const spineTitle = albumCard.querySelector('.book-spine span');
-            if (spineTitle) spineTitle.innerText = data.title;
-            sidePanel.querySelector('.panel-artist').innerHTML = data.artist;
-            const stats = sidePanel.querySelectorAll('.stat-value');
-            if (stats.length >= 1) {
-              stats[0].innerText = data.listens;
-            }
-            sidePanel.querySelector('.panel-description p').innerText = data.desc;
-            sidePanel.querySelector('.platform-btn.spotify').setAttribute('href', data.spotify || '#');
-            sidePanel.querySelector('.platform-btn.apple').setAttribute('href', data.apple || '#');
-            sidePanel.querySelector('.platform-btn.youtube').setAttribute('href', data.youtube || '#');
-            if (sidePanel.querySelector('.platform-btn.soundcloud')) sidePanel.querySelector('.platform-btn.soundcloud').setAttribute('href', data.soundcloud || '#');
-            if (sidePanel.querySelector('.platform-btn.instagram')) sidePanel.querySelector('.platform-btn.instagram').setAttribute('href', data.instagram || '#');
-          }
-
-          sidePanel.classList.add('open');
-          const backdrop = document.getElementById('panel-backdrop');
-          if (backdrop) backdrop.classList.add('active');
-          document.body.style.overflow = 'hidden';
-          if (typeof lenis !== 'undefined') lenis.stop();
+          e.stopPropagation(); // Prevent duplicate trigger from bubbling up to albumCard
+          openAlbumPanel();
         });
       }
     });
@@ -912,8 +949,7 @@ function initAlbumShowcase() {
   const focusViewBtn = document.getElementById('focus-view-btn');
   const focusHintUp = document.getElementById('focus-hint-up');
   const focusHintDown = document.getElementById('focus-hint-down');
-  const focusNavPrev = document.getElementById('focus-nav-prev');
-  const focusNavNext = document.getElementById('focus-nav-next');
+
 
   let currentFocusAudio = "";
   let activeMiniAlbum = null;
@@ -927,16 +963,7 @@ function initAlbumShowcase() {
 
   // Helper: update nav button visibility based on current album position within its section
   const updateNavButtons = (albumNode) => {
-    const sectionAlbums = getSectionAlbums(albumNode);
-    const idx = sectionAlbums.indexOf(albumNode);
-    if (focusNavPrev) {
-      if (idx > 0) { focusNavPrev.classList.add('visible'); }
-      else { focusNavPrev.classList.remove('visible'); }
-    }
-    if (focusNavNext) {
-      if (idx < sectionAlbums.length - 1) { focusNavNext.classList.add('visible'); }
-      else { focusNavNext.classList.remove('visible'); }
-    }
+    // No-op: Navigation buttons removed
   };
 
   // Helper: dim all albums except the active one using CSS classes (not GSAP inline styles)
@@ -959,6 +986,9 @@ function initAlbumShowcase() {
       el.classList.remove('focus-dimmed');
       // Clear GSAP inline transforms so ScrollTrigger can re-evaluate cleanly
       gsap.set(el, { clearProps: "transform,opacity" });
+      if (window.innerWidth <= 768) {
+        gsap.set(el, { opacity: 1, y: 0, scale: 1, rotationZ: 0 });
+      }
     });
     document.querySelectorAll('.mini-album-3d').forEach(el => {
       el.classList.remove('focus-hidden');
@@ -989,6 +1019,15 @@ function initAlbumShowcase() {
     currentFocusAudio = data.audio || "";
 
     if (focusTitle) focusTitle.innerText = data.title;
+
+    // Update background marquee text with active album details
+    const marqueeContent = document.getElementById('focus-marquee-content');
+    if (marqueeContent) {
+      const detailsText = `${data.title} - ${data.artist} • ${data.listens} LISTENS • `;
+      marqueeContent.innerText = detailsText.repeat(8);
+      const activeColor = albumColors[filename] || "rgba(255, 255, 255, 0.15)";
+      marqueeContent.style.webkitTextStroke = `1.5px ${activeColor}`;
+    }
 
     // Move the focus modal in the DOM to be after the new album's container
     const container = targetAlbumNode.parentElement;
@@ -1087,6 +1126,15 @@ function initAlbumShowcase() {
       if (focusImg) focusImg.src = src;
       if (focusImgBack) focusImgBack.src = src;
       if (focusTitle) focusTitle.innerText = data.title;
+
+      // Update background marquee text with active album details
+      const marqueeContent = document.getElementById('focus-marquee-content');
+      if (marqueeContent) {
+        const detailsText = `${data.title} - ${data.artist} • ${data.listens} LISTENS • `;
+        marqueeContent.innerText = detailsText.repeat(8);
+        const activeColor = albumColors[filename] || "rgba(255, 255, 255, 0.15)";
+        marqueeContent.style.webkitTextStroke = `1.5px ${activeColor}`;
+      }
       currentFocusAudio = data.audio || "";
 
       // Pause rotation of only the active album, let others keep spinning
@@ -1101,9 +1149,13 @@ function initAlbumShowcase() {
 
       focusModal.classList.remove('is-closing');
 
-      gsap.killTweensOf([focusModal, focusAlbumModel, focusOverlay, focusBackBtn, focusViewBtn, focusHintUp, focusHintDown]);
+      const marqueeWrapper = document.getElementById('focus-marquee-wrapper');
+      gsap.killTweensOf([focusModal, focusAlbumModel, focusOverlay, focusBackBtn, focusViewBtn, focusHintUp, focusHintDown, marqueeWrapper]);
       gsap.set(focusModal, { visibility: "visible", pointerEvents: "auto" });
       gsap.to(focusOverlay, { opacity: 1, duration: 0.4 });
+      if (marqueeWrapper) {
+        gsap.to(marqueeWrapper, { opacity: 1, duration: 0.4 });
+      }
       const targetHeight = window.innerWidth > 768 ? 600 : 420;
       gsap.to(focusModal, { height: targetHeight, duration: 0.6, ease: "power2.inOut" });
 
@@ -1186,17 +1238,17 @@ function initAlbumShowcase() {
     focusModal.classList.add('is-closing');
     focusModal.style.pointerEvents = "none";
 
-    const targets = [focusModal, focusAlbumModel, focusOverlay, focusBackBtn, focusViewBtn, focusHintUp, focusHintDown];
+    const marqueeWrapper = document.getElementById('focus-marquee-wrapper');
+    const targets = [focusModal, focusAlbumModel, focusOverlay, focusBackBtn, focusViewBtn, focusHintUp, focusHintDown, marqueeWrapper];
     gsap.killTweensOf(targets);
 
     gsap.to(focusOverlay, { opacity: 0, duration: 0.4 });
+    if (marqueeWrapper) gsap.to(marqueeWrapper, { opacity: 0, duration: 0.4 });
     if (focusBackBtn) gsap.to(focusBackBtn, { opacity: 0, duration: 0.2 });
     if (focusViewBtn) gsap.to(focusViewBtn, { opacity: 0, duration: 0.2 });
     if (focusHintUp) gsap.to(focusHintUp, { opacity: 0, duration: 0.2 });
     if (focusHintDown) gsap.to(focusHintDown, { opacity: 0, duration: 0.2 });
-    // Hide album nav buttons
-    if (focusNavPrev) focusNavPrev.classList.remove('visible');
-    if (focusNavNext) focusNavNext.classList.remove('visible');
+
 
     if (activeMiniAlbum) {
       // Briefly show the active album so we can measure its position for fly-back
@@ -1258,26 +1310,9 @@ function initAlbumShowcase() {
     focusBackBtn.addEventListener('click', closeFocusModal);
   }
 
-  // --- Prev / Next Album Navigation ---
-  if (focusNavPrev) {
-    focusNavPrev.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!activeMiniAlbum) return;
-      const sectionAlbums = getSectionAlbums(activeMiniAlbum);
-      const idx = sectionAlbums.indexOf(activeMiniAlbum);
-      if (idx > 0) navigateToAlbum(sectionAlbums[idx - 1]);
-    });
-  }
-  if (focusNavNext) {
-    focusNavNext.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!activeMiniAlbum) return;
-      const sectionAlbums = getSectionAlbums(activeMiniAlbum);
-      const idx = sectionAlbums.indexOf(activeMiniAlbum);
-      if (idx < sectionAlbums.length - 1) navigateToAlbum(sectionAlbums[idx + 1]);
-    });
-  }
+
   let focusScrollAmount = 0;
+  let focusTouchStartX = 0;
   let focusTouchStartY = 0;
 
   document.addEventListener('wheel', (e) => {
@@ -1295,6 +1330,7 @@ function initAlbumShowcase() {
 
   document.addEventListener('touchstart', (e) => {
     if (e.touches.length > 0) {
+      focusTouchStartX = e.touches[0].clientX;
       focusTouchStartY = e.touches[0].clientY;
     }
   }, { passive: true });
@@ -1310,6 +1346,35 @@ function initAlbumShowcase() {
       }
     }
   }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (focusModal.style.visibility === 'visible') {
+      if (sidePanel && sidePanel.contains(e.target)) return;
+      if (e.changedTouches.length > 0) {
+        const diffX = e.changedTouches[0].clientX - focusTouchStartX;
+        const diffY = e.changedTouches[0].clientY - focusTouchStartY;
+
+        // Swipe Left/Right to switch albums
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+          if (!activeMiniAlbum) return;
+          const sectionAlbums = getSectionAlbums(activeMiniAlbum);
+          const idx = sectionAlbums.indexOf(activeMiniAlbum);
+
+          if (diffX < 0) {
+            // Swipe Left -> Next Album
+            if (idx < sectionAlbums.length - 1) {
+              navigateToAlbum(sectionAlbums[idx + 1]);
+            }
+          } else {
+            // Swipe Right -> Previous Album
+            if (idx > 0) {
+              navigateToAlbum(sectionAlbums[idx - 1]);
+            }
+          }
+        }
+      }
+    }
+  });
 
   if (focusImg) {
     focusImg.addEventListener('click', (e) => {
@@ -1457,34 +1522,40 @@ if (headingExploreGujarati && headingGujarati) {
   });
 }
 
-// Explore More Albums Scroll Animation (Up from bottom with tilt/rotation)
-document.querySelectorAll('.mini-album-container').forEach((album, index) => {
-  // Alternate initial tilt direction for a dynamic staggered feel
-  const rotZ = index % 2 === 0 ? 15 : -15;
+// Explore More Albums Scroll Animation (Up from bottom with tilt/rotation) - Desktop/Tablet Only
+if (window.innerWidth > 768) {
+  document.querySelectorAll('.mini-album-container').forEach((album, index) => {
+    // Alternate initial tilt direction for a dynamic staggered feel
+    const rotZ = index % 2 === 0 ? 15 : -15;
 
-  gsap.fromTo(album,
-    {
-      y: 150,
-      opacity: 0,
-      rotationZ: rotZ,
-      scale: 0.8
-    },
-    {
-      y: 0,
-      opacity: 1,
-      rotationZ: 0,
-      scale: 1,
-      duration: 0.8,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: album,
-        start: "top 95%",
-        end: "bottom 5%",
-        toggleActions: "play reverse play reverse"
+    gsap.fromTo(album,
+      {
+        y: 150,
+        opacity: 0,
+        rotationZ: rotZ,
+        scale: 0.8
+      },
+      {
+        y: 0,
+        opacity: 1,
+        rotationZ: 0,
+        scale: 1,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: album,
+          start: "top 95%",
+          once: true
+        }
       }
-    }
-  );
-});
+    );
+  });
+} else {
+  // On mobile, ensure all containers are immediately 100% visible and positioned naturally to eliminate spacing gaps
+  document.querySelectorAll('.mini-album-container').forEach((album) => {
+    gsap.set(album, { opacity: 1, y: 0, scale: 1, rotationZ: 0 });
+  });
+}
 
 // --- 6. Premium 3D Mouse Parallax Tilt for Hero Section (Desktop Only) ---
 if (window.innerWidth > 768) {
@@ -1632,4 +1703,32 @@ if (window.innerWidth > 768) {
       ScrollTrigger.refresh();
     }, 100);
   });
+})();
+
+// Auto-cycling About Profile / Showcase Images
+(function initAboutImageCycler() {
+  const aboutImg = document.getElementById('about-profile-img');
+  if (!aboutImg) return;
+
+  const images = [
+    "assets/nikil.png",
+    "assets/nikil.webp",
+    "assets/album1.webp",
+    "assets/album3.webp",
+    "assets/album5.webp",
+    "assets/album8.webp",
+    "assets/album12.webp",
+    "assets/gujarati_main.webp",
+    "assets/gujarati2.webp"
+  ];
+  let index = 0;
+
+  setInterval(() => {
+    aboutImg.classList.add('fade-out');
+    setTimeout(() => {
+      index = (index + 1) % images.length;
+      aboutImg.src = images[index];
+      aboutImg.classList.remove('fade-out');
+    }, 600); // Matches the 0.6s CSS transition
+  }, 4000); // Cycles every 4 seconds
 })();
