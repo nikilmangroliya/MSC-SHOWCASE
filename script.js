@@ -8,9 +8,11 @@ window.addEventListener('beforeunload', () => {
 
 // Optimization: Lenis Smooth Scroll Synchronized with GSAP
 const lenis = new Lenis({
-  duration: 1.2,
-  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smooth: true
+  lerp: 0.08,             // Linear interpolation (lower = smoother damping, caps sudden high-speed swipe spikes)
+  wheelMultiplier: 0.75,  // Dampen wheel scroll speed to prevent fast overshooting
+  touchMultiplier: 0.8,   // Dampen mobile touch swipe speed to maintain stable frame rates
+  smooth: true,
+  smoothTouch: true       // Enable smooth touch scrolling on mobile to keep GSAP animations completely stutter-free
 });
 lenis.scrollTo(0, { immediate: true });
 
@@ -150,6 +152,7 @@ function initPageAnimations() {
       });
 
       tl.to(".hero-image", { scale: 1.5, y: "10vh", ease: "none" }, 0);
+      tl.to(".hero-backdrop", { scale: 1.15, y: "4vh", ease: "none" }, 0);
 
       tl.fromTo(heroSubChars,
         { opacity: 0, y: 30 },
@@ -161,25 +164,39 @@ function initPageAnimations() {
 
     // Tablet animations (481px - 768px)
     mm.add("(min-width: 481px) and (max-width: 768px)", () => {
+      // Character scale & zoom parallax
       gsap.to(".hero-image", {
-        scale: 1.3, y: "5vh", ease: "none",
-        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+        scale: 1.35, y: "8vh", ease: "none",
+        scrollTrigger: { trigger: ".hero-image-container", start: "top top", end: "bottom top", scrub: true }
       });
+      // Ambient frosted pill parallax
+      gsap.to(".hero-backdrop", {
+        scale: 1.15, y: "4vh", ease: "none",
+        scrollTrigger: { trigger: ".hero-image-container", start: "top top", end: "bottom top", scrub: true }
+      });
+      // Back text fade & scale
       gsap.to(".hero-text-group:not(.front-text)", {
         scale: 0.9, opacity: 0, ease: "none",
-        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+        scrollTrigger: { trigger: ".hero-image-container", start: "top top", end: "bottom top", scrub: true }
       });
     });
 
     // Mobile animations (up to 480px)
     mm.add("(max-width: 480px)", () => {
+      // Character scale & zoom parallax
       gsap.to(".hero-image", {
-        scale: 1.2, y: "3vh", ease: "none",
-        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+        scale: 1.35, y: "6vh", ease: "none",
+        scrollTrigger: { trigger: ".hero-image-container", start: "top top", end: "bottom top", scrub: true }
       });
+      // Ambient frosted pill parallax
+      gsap.to(".hero-backdrop", {
+        scale: 1.12, y: "3vh", ease: "none",
+        scrollTrigger: { trigger: ".hero-image-container", start: "top top", end: "bottom top", scrub: true }
+      });
+      // Back text fade & scale
       gsap.to(".hero-text-group:not(.front-text)", {
         scale: 0.9, opacity: 0, ease: "none",
-        scrollTrigger: { trigger: ".hero", start: "top top", end: "80% top", scrub: true }
+        scrollTrigger: { trigger: ".hero-image-container", start: "top top", end: "80% top", scrub: true }
       });
     });
 
@@ -250,7 +267,7 @@ function initAlbumShowcase() {
     },
     "album3.webp": {
       title: "SAHIBA",
-      artist: "JASLEEN ROYAL",
+      artist: "AAITYA RIKARI",
       listens: "8.3M",
       desc: "A mesmerizing and soulful melody that captures the profound essence of love, longing, and devotion. \"Sahiba\" weaves a tale of romance that resonates deeply with the heart, wrapped in a beautiful acoustic arrangement.",
       spotify: "https://open.spotify.com/search/Sahiba%20Jasleen%20Royal",
@@ -262,7 +279,7 @@ function initAlbumShowcase() {
     },
     "album4.webp": {
       title: "KASHISH",
-      artist: "INDIE",
+      artist: "PATHAK",
       listens: "830K",
       desc: "An intense exploration of human feelings and the undeniable attraction between two souls. Blending raw lyrics with atmospheric beats to create a deeply moving musical experience.",
       spotify: "https://open.spotify.com/search/Kashish",
