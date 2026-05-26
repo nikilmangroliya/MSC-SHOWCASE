@@ -176,10 +176,32 @@
       will-change: transform, opacity;
     }
 
+    html {
+      scroll-behavior: initial;
+    }
+
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+
     body {
       background-color: var(--bg-main);
       color: var(--text-white);
       overflow-x: hidden;
+      overscroll-behavior-y: none; /* Stops elastic browser bounce & gesture pull-down lag */
+      overscroll-behavior-x: none;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
